@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomepageController!{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row mt-5">
+            <div class="col-lg-8">
+                <div class="accordion" id="phasesAccordion">
+                    {% for phase in phases %}
+                        <div class="card">
+                            <div class="card-header" id="heading-{{ phase.id }}">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#collapse-phase-{{ phase.id }}"
+                                            aria-expanded="true" aria-controls="ccollapse-phase-{{ phase.id }}">
+                                        {{ phase.name }}
+                                    </button>
+                                    <span class="icon-Ynnead float-right"></span>
+                                </h2>
+                            </div>
+                            <div id="collapse-phase-{{ phase.id }}" class="collapse"
+                                 aria-labelledby="heading-{{ phase.id }}">
+                                <div class="card-body">
+                                    {% for rule in rules if phase in rule.phases %}
+                                        <h3>{{ rule.name }}</h3>
+                                        <p>{{ rule.description|raw }}</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="accordion" id="ruleAccordion">
+                    {% for rule in rules if rule.phases is empty %}
+                        <div class="card">
+                            <div class="card-header" id="headingRule{{ rule.id }}">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                            data-target="#collapseRule{{ rule.id }}" aria-expanded="false"
+                                            aria-controls="collapseRule{{ rule.id }}">
+                                        {{ rule.name }}
+                                    </button>
+                                </h2>
+                            </div>
+                            <div id="collapseRule{{ rule.id }}" class="collapse"
+                                 aria-labelledby="headingRule{{ rule.id }}">
+                                <div class="card-body">
+                                    <h4>{{ rule.name }}</h4>
+                                    <p>{{ rule.description|raw }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {#<div class="accordion" id="rulesAccordion">
+                    {% for rule in rules if rule.phases is empty %}
+                        <div class="card">
+                            <div class="card-header" id="heading-rule-{{ rule.id }}">
+                                <h2 class="mb-0">
+                                    <button class="btn btn-link" type="button" data-toggle="collapse"
+                                            data-target="#ccollapse-rule-{{ rule.id }}"
+                                            aria-expanded="true" aria-controls="collapse-rule-{{ rule.id }}">
+                                        {{ rule.name }}
+                                    </button>
+                                </h2>
+                            </div>
+
+                            <div id="collapse-rule-{{ rule.id }}" class="collapse"
+                                 aria-labelledby="heading-rule-{{ rule.id }}"
+                                 data-parent="#rulesAccordion">
+                                <div class="card-body">
+                                    <h3>{{ rule.name }}</h3>
+                                    <p>{{ rule.description }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>#}
+            </div>
+        </div>
+    </div>
+{% endblock %}

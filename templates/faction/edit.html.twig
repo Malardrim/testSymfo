@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Faction{% endblock %}
+
+{% block body %}
+<a class="btn btn-primary position-sticky float-left m-5" role="button" href="{{ path('faction_index') }}"><i class="fas fa-arrow-left"></i> Back</a>
+<div class="container">
+    <h1>Edit Faction</h1>
+
+    {{ include('faction/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('faction/_delete_form.html.twig') }}
+</div>
+{% endblock %}

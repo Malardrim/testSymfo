@@ -1,0 +1,20 @@
+{% form_theme form 'forms/custom_form.html.twig' %}
+{{ form_start(form) }}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="offset-2 col-lg-4">
+                {{ form_row(form.name) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg">
+                {{ form_row(form.description) }}
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        <button class="btn btn-primary my-1 float-right"><i class="fas fa-save"></i> {{ button_label|default('Save') }}</button>
+    </div>
+</div>
+{{ form_end(form) }}

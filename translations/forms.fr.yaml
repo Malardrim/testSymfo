@@ -1,0 +1,15 @@
+rule:
+  name: Nom de la regle
+  description: Texte de la regle (ses effets)
+  origin: Nom du document d'origine de la regle
+  lastUpdateOrigin: Nom du document derniere update
+  faction: Faction d'origine de la regle
+  phases: Phases dans lesquelles la regle peut s'appliquer
+  faction_none: Pas de faction
+  help:
+    name: Rule's name, field required
+    description: Text of the rule, it's effects, replace by updated rule if necessary, field required
+    origin: Where the rule come initially from
+    lastUpdateOrigin: Where the rule was last updated
+    faction: If there is no faction do not input any
+    phases: If none is specified it will asume it came come in play at any phase

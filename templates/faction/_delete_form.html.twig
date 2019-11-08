@@ -1,0 +1,21 @@
+<form id="delete_faction_form" class="{{ delete_class|default('') }}" method="post" action="{{ path('faction_delete', {'id': faction.id}) }}">
+    <input type="hidden" name="_method" value="DELETE">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ faction.id) }}">
+    <button class="btn btn-danger my-1 {{ delete_class|default('') }}" type="button" data-toggle="modal" data-target="#deleteModal">Delete <i class="fas fa-trash"></i></button>
+</form>
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                Are you sure tou want to delete this item
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" onclick="document.getElementById('delete_faction_form').submit()">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>

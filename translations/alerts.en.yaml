@@ -1,0 +1,4 @@
+success:
+  rule_edit: The rule has been correctly modified
+  rule_delete: The rule has been properly deleted
+  rule_create: The rule has been correctly added

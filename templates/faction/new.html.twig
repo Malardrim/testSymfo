@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Faction{% endblock %}
+
+{% block body %}
+    <a class="btn btn-primary position-sticky float-left m-5" role="button" href="{{ path('faction_index') }}"><i class="fas fa-arrow-left"></i> Back</a>
+    <div class="container">
+        <h1>Create new Faction</h1>
+        {{ include('faction/_form.html.twig') }}
+    </div>
+{% endblock %}

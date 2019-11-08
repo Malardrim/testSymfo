@@ -1,0 +1,16 @@
+rule:
+  name: Name of the rule
+  description: Text of the rule (it's effects)
+  origin: Rule's origin book
+  lastUpdateOrigin: Last update book origin
+  faction: Faction affected by the rule (if any)
+  phases: Phases the rule kicks-in
+  faction_none: No faction
+  type: Type of the rule (usually set auto)
+  help:
+    name: Rule's name, field required
+    description: Text of the rule, it's effects, replace by updated rule if necessary, field required
+    origin: Where the rule come initially from
+    lastUpdateOrigin: Where the rule was last updated
+    faction: If there is no faction do not input any
+    phases: If none is specified it will asume it came come in play at any phase
