@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <title>{% block title %}SymfonyTest{% endblock %}</title>
     {% block stylesheets %}
-        {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" href="{{ asset('build/css/app.css') }}">
+        {#{{ encore_entry_link_tags('app') }}#}
     {% endblock %}
 </head>
 <body>
@@ -39,7 +40,9 @@
 {% endblock %}
 {% block body %}{% endblock %}
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
+    {#{{ encore_entry_script_tags('app') }}#}
+    {#<script src="{{ asset('build/runtime.js') }}"></script>#}
+    <script src="{{ asset('build/js/app.js') }}"></script>
 {% endblock %}
 </body>
 </html>

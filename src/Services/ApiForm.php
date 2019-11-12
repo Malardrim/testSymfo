@@ -3,38 +3,30 @@
 
 namespace App\Services;
 
-
-use phpDocumentor\Reflection\Types\Object_;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class ApiForm
 {
     private $validator;
-    public function __construct(ValidatorInterface $validator)
+    private $serializer;
+
+    public function __construct(ValidatorInterface $validator, SerializerInterface $serializer)
     {
+        $this->serializer = $serializer;
         $this->validator = $validator;
     }
 
-    public function validateAndCreate($data, $entityClassName){
-
-        $objectNormalizer = new ObjectNormalizer();
-        $normalizers = [$objectNormalizer];
-        $encoders = [new JsonEncoder()];
-        $serializer = new Serializer($normalizers, $encoders);
-
-        dump($data);die;
-        $result = $serializer->deserialize($data, "Array", 'json');
-        die();
+    public function validateAndCreate($data, $entityClassName)
+    {
+        $result = $this->serializer->deserialize($data, $entityClassName, 'json');
         $errors = $this->validator->validate($result);
 
-        if(count($errors) > 0){
-            throw new CustomApiException(Response::HTTP_BAD_REQUEST, (string) $errors);
+        if (count($errors) > 0) {
+            throw new CustomApiException(Response::HTTP_BAD_REQUEST, (string)$errors);
         }
-
         return $result;
-
     }
 }

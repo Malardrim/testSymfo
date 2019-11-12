@@ -8,38 +8,31 @@ const $ = require('jquery');
 
 global.$ = global.JQuery = $;
 
-const fa = require("fontawesome");
 require('bootstrap');
+const fa = require("fontawesome");
 require('bootstrap-select');
 
-//require("bootstrap/scss/bootstrap.scss");
-// any CSS you require will output into a single css file (app.css in this case)
-require('../css/variables.sass');
-require('bootstrap-select/sass/bootstrap-select.scss');
-require('@fortawesome/fontawesome-free/css/all.css');
-require('../fonts/icomoon/style.css');
-require('../css/app.sass');
-require('../css/homepage.sass');
-
-
-// Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
-// const $ = require('jquery');
-
 $(document).ready(function () {
+    console.log("haha");
     initForms();
     $('[data-toggle="tooltip"]').tooltip();
     $('.ajax-form-symfo').on('submit', function (e) {
         e.preventDefault();
         let data = {};
         var regex = /phase/;
-        $(this).serializeArray().forEach((object)=>{
-            if (object.name.match(regex)){
-                object.name = 'phases';
+        $(this).serializeArray().forEach((object) => {
+            var name = $("[name='" + object.name + "']").attr('ajax_name');
+            if (name) {
+                if (name == "phases") {
+                    if (!data[name])
+                        data[name] = [];
+                    data[name].push(object.value);
+                } else
+                    data[name] = object.value;
             }
-            else
-                data[object.name] = object.value;
         });
-        data['rule_description'] = CKEDITOR.instances.rule_description.getData();
+        data['description'] = CKEDITOR.instances.rule_description.getData();
+        console.log(data);
         var pathajax = $(this).data('pathajax');
         $.ajax({
             url: pathajax,

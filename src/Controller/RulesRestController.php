@@ -64,17 +64,11 @@ class RulesRestController extends AbstractController
     public function newRule(Request $request, ApiForm $apiService, ObjectManager $manager)
     {
         $data = $request->getContent();
-        /*$serializer = new Serializer($this->normalizers, $this->encoders);
         try {
             $rule = $apiService->validateAndCreate($data, Rule::class);
-            $jsonObject = $serializer->serialize($rule, 'json', [
-                'circular_reference_handler' => function ($object) {
-                    return $object->getId();
-                }
-            ]);
         } catch (\Exception $e) {
             return new Response($e->getMessage(), 500, ['Content-Type' => 'application/json']);
-        }*/
-        return new Response($data, 200, ['Content-Type' => 'application/json']);
+        }
+        return new Response("Success", 200, ['Content-Type' => 'application/json']);
     }
 }

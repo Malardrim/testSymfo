@@ -4,27 +4,27 @@
     <div class="card-body">
         <div class="row">
             <div class="col-lg-6">
-                {{ form_row(form.name) }}
-                {{ form_row(form.faction) }}
+                {{ form_row(form.name, {'attr': {'ajax_name': 'name'}}) }}
+                {{ form_row(form.faction, {'attr': {'ajax_name': 'faction'}}) }}
             </div>
             <div class="col-lg-6">
-                {{ form_row(form.origin) }}
-                {{ form_row(form.lastUpdateOrigin) }}
+                {{ form_row(form.origin, {'attr': {'ajax_name': 'origin'}}) }}
+                {{ form_row(form.lastUpdateOrigin, {'attr': {'ajax_name': 'lastUpdateOrigin'}}) }}
             </div>
         </div>
         <div class="row">
             <div class="col-lg-6">
-                {{ form_row(form.type) }}
+                {{ form_row(form.type, {'attr': {'ajax_name': 'type'}}) }}
             </div>
         </div>
         <div class="row">
             <div class="col-lg">
-                {{ form_row(form.description) }}
+                {{ form_row(form.description, {'attr': {'ajax_name': 'description'}}) }}
             </div>
         </div>
         <div class="row">
             <div class="col-lg">
-                {{ form_row(form.phases, {'label_attr': {'class': 'checkbox-inline checkbox-custom'}}) }}
+                {{ form_row(form.phases, {'attr': {'ajax_name': 'phases'}}) }}
             </div>
         </div>
     </div>
