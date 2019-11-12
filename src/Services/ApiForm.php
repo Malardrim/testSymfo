@@ -23,7 +23,7 @@ class ApiForm
     {
         $result = $this->serializer->deserialize($data, $entityClassName, 'json');
         $errors = $this->validator->validate($result);
-
+        dump($errors);
         if (count($errors) > 0) {
             throw new CustomApiException(Response::HTTP_BAD_REQUEST, (string)$errors);
         }

@@ -32,18 +32,24 @@ $(document).ready(function () {
             }
         });
         data['description'] = CKEDITOR.instances.rule_description.getData();
-        console.log(data);
         var pathajax = $(this).data('pathajax');
         $.ajax({
             url: pathajax,
             data: JSON.stringify(data),
             method: 'POST',
-            success: function (data_remote) {
-                console.log(data_remote);
-            },
-            fail: function (data_remote) {
-                console.log(data_remote);
-            }
+            dataType: 'json',
+        }).done(function (data) {
+            $('.ajax-form-symfo').trigger('reset');
+            $('#ajax_message').html("Successfully updated the ruleset");
+            var item_rules = $("#item_rules");
+            item_rules.append(new Option("New super rule", "25"));
+            item_rules.selectpicker('val', '25');
+            item_rules.selectpicker('refresh');
+        }).fail(function (data) {
+            $('#ajax_message').html(data.responseJSON);
+        }).always(function (data) {
+            $('#newRuleModal').modal('hide');
+            $('#ajax_response').modal('show');
         });
     });
 });
