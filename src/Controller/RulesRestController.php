@@ -64,11 +64,17 @@ class RulesRestController extends AbstractController
     public function newRule(Request $request, ApiForm $apiService, ObjectManager $manager)
     {
         $data = $request->getContent();
+        $response = [];
         try {
             $rule = $apiService->validateAndCreate($data, Rule::class);
+            $manager->persist($rule);
+            $manager->flush();
+            $response['id'] = $rule->getId();
+            $response['name'] = $rule->getName();
+            $response['message'] = "Successfully updated the ruleset";
         } catch (\Exception $e) {
             return new Response(json_encode($e->getMessage()), 500, ['Content-Type' => 'application/json']);
         }
-        return new Response(json_encode("Success"), 200, ['Content-Type' => 'application/json']);
+        return new Response(json_encode($response), 200, ['Content-Type' => 'application/json']);
     }
 }

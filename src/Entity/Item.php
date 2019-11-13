@@ -34,9 +34,9 @@ class Item
     private $description;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Rule")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Phase")
      */
-    private $rules;
+    private $phases;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -112,12 +112,12 @@ class Item
     /**
      * @return Collection|Rule[]
      */
-    public function getRules(): Collection
+    public function getPhases(): Collection
     {
         return $this->rules;
     }
 
-    public function addRule(Rule $rule): self
+    public function addPhase(Rule $rule): self
     {
         if (!$this->rules->contains($rule)) {
             $this->rules[] = $rule;

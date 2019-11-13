@@ -40,10 +40,10 @@ $(document).ready(function () {
             dataType: 'json',
         }).done(function (data) {
             $('.ajax-form-symfo').trigger('reset');
-            $('#ajax_message').html("Successfully updated the ruleset");
+            $('#ajax_message').html(data.message);
             var item_rules = $("#item_rules");
-            item_rules.append(new Option("New super rule", "25"));
-            item_rules.selectpicker('val', '25');
+            item_rules.append(new Option(data.name, data.id));
+            item_rules.selectpicker('val', data.id);
             item_rules.selectpicker('refresh');
         }).fail(function (data) {
             $('#ajax_message').html(data.responseJSON);

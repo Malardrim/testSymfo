@@ -1,24 +1,26 @@
 {% block pagination %}
-    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
-        <ul class="pagination m-3">
-            <li class="page-item {{ (page == 1) ? 'disabled' }}">
+    {% if total_pages > 0 %}
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+            <ul class="pagination m-3">
+                <li class="page-item {{ (page == 1) ? 'disabled' }}">
 
-                <a class="page-link disabled" href="{{ (page != 1) ? path(route, {'page': page - 1}) : '#' }}"
-                   aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </a>
-            </li>
-            {% for i in 1..total_pages %}
-                <li class="page-item {{ (i == page) ? 'active' }}"><a class="page-link"
-                                                                      href="{{ path(route, {'page': i}) }}">{{ i }}</a>
+                    <a class="page-link disabled" href="{{ (page != 1) ? path(route, {'page': page - 1}) : '#' }}"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
                 </li>
-            {% endfor %}
-            <li class="page-item {{ (page == total_pages) ? 'disabled' }}">
-                <a class="page-link" href="{{ (page != total_pages) ? path(route, {'page': page + 1}) : '#' }}"
-                   aria-label="Previous">
-                    <span aria-hidden="true">&raquo;</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+                {% for i in 1..total_pages %}
+                    <li class="page-item {{ (i == page) ? 'active' }}"><a class="page-link"
+                                                                          href="{{ path(route, {'page': i}) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                <li class="page-item {{ (page == total_pages) ? 'disabled' }}">
+                    <a class="page-link" href="{{ (page != total_pages) ? path(route, {'page': page + 1}) : '#' }}"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    {% endif %}
 {% endblock %}
