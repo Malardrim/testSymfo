@@ -65,7 +65,7 @@ class Item
 
     public function __construct()
     {
-        $this->rules = new ArrayCollection();
+        $this->phases = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -110,26 +110,26 @@ class Item
     }
 
     /**
-     * @return Collection|Rule[]
+     * @return Collection|Phase[]
      */
     public function getPhases(): Collection
     {
-        return $this->rules;
+        return $this->phases;
     }
 
-    public function addPhase(Rule $rule): self
+    public function addPhase(Phase $phase): self
     {
-        if (!$this->rules->contains($rule)) {
-            $this->rules[] = $rule;
+        if (!$this->phases->contains($phase)) {
+            $this->phases[] = $phase;
         }
 
         return $this;
     }
 
-    public function removeRule(Rule $rule): self
+    public function removePhase(Phase $phase): self
     {
-        if ($this->rules->contains($rule)) {
-            $this->rules->removeElement($rule);
+        if ($this->phases->contains($phase)) {
+            $this->phases->removeElement($phase);
         }
 
         return $this;

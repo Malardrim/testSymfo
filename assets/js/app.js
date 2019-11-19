@@ -5,12 +5,12 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 const $ = require('jquery');
-
 global.$ = global.JQuery = $;
 
 require('bootstrap');
 const fa = require("fontawesome");
 require('bootstrap-select');
+require('./dragndrop.js');
 
 $(document).ready(function () {
     console.log("haha");

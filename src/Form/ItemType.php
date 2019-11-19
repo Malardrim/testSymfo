@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Item;
+use App\Entity\Phase;
 use App\Entity\Rule;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -20,8 +21,8 @@ class ItemType extends AbstractType
             ->add('description', CKEditorType::class)
             ->add('type')
             ->add('reach')
-            ->add('rules', EntityType::class, [
-                'class' => Rule::class,
+            ->add('phases', EntityType::class, [
+                'class' => Phase::class,
                 'multiple' => true,
                 'attr' => [
                     'class' => 'selectpicker',

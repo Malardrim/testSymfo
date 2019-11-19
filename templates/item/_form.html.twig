@@ -5,10 +5,7 @@
         <div class="row">
             <div class="col-lg-6">
                 {{ form_row(form.name) }}
-                {{ form_row(form.rules) }}
-                <button type="button" class="btn btn-success mb-2" data-toggle="modal" data-target="#newRuleModal">
-                    <i class="fas fa-plus"></i> Add a rule
-                </button>
+                {{ form_row(form.phases) }}
             </div>
             <div class="col-lg-6">
                 {{ form_row(form.type) }}
@@ -41,20 +38,6 @@
     </div>
 </div>
 {{ form_end(form) }}
-<div class="modal fade" id="newRuleModal" tabindex="-1" role="dialog" aria-labelledby="newRuleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="btn btn-secondary float-right" data-dismiss="modal"><i
-                            class="fas fa-times"></i></button>
-            </div>
-            <div class="modal-body">
-                {% include 'rule/_form_ajax.html.twig' with {'form': form_rule } %}
-            </div>
-        </div>
-    </div>
-</div>
 
 <div class="modal fade" id="ajax_response" tabindex="-1" role="dialog"
      aria-hidden="true">

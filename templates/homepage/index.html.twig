@@ -1,10 +1,60 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomepageController!{% endblock %}
+{% block title %}Test Symfony{% endblock %}
 
 {% block body %}
+    <style>
+        #outer-dropzone {
+            height: 140px;
+        }
+
+        #inner-dropzone {
+            height: 80px;
+        }
+
+        .dropzone {
+            background-color: #ccc;
+            border: dashed 4px transparent;
+            border-radius: 4px;
+            margin: 10px auto 30px;
+            padding: 10px;
+            width: 80%;
+            transition: background-color 0.3s;
+        }
+
+        .drop-active {
+            border-color: #aaa;
+        }
+
+        .drop-target {
+            background-color: #29e;
+            border-color: #fff;
+            border-style: solid;
+        }
+
+        .drag-drop {
+            display: inline-block;
+            min-width: 40px;
+            padding: 2em 0.5em;
+
+            color: #fff;
+            background-color: #29e;
+            border: solid 2px #fff;
+
+            touch-action: none;
+            -webkit-transform: translate(0px, 0px);
+            transform: translate(0px, 0px);
+
+            transition: background-color 0.3s;
+        }
+
+        .drag-drop.can-drop {
+            color: #000;
+            background-color: #4e4;
+        }
+    </style>
     <div class="container-fluid">
-        <div class="row mt-5">
+        {#<div class="row mt-5">
             <div class="col-lg-8">
                 <div class="accordion" id="phasesAccordion">
                     {% for phase in phases %}
@@ -55,7 +105,7 @@
                         </div>
                     {% endfor %}
                 </div>
-                {#<div class="accordion" id="rulesAccordion">
+                #}{#<div class="accordion" id="rulesAccordion">
                     {% for rule in rules if rule.phases is empty %}
                         <div class="card">
                             <div class="card-header" id="heading-rule-{{ rule.id }}">
@@ -78,8 +128,16 @@
                             </div>
                         </div>
                     {% endfor %}
-                </div>#}
+                </div>#}{#
             </div>
+        </div>#}
+        <div id="no-drop" class="drag-drop">#no-drop</div>
+
+        <div id="yes-drop" class="drag-drop">#yes-drop</div>
+
+        <div id="outer-dropzone" class="dropzone">
+            #outer-dropzone
+            <div id="inner-dropzone" class="dropzone">#inner-dropzone</div>
         </div>
     </div>
 {% endblock %}
