@@ -3,6 +3,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Item;
 use App\Entity\Rule;
 use App\Services\ApiForm;
 use App\Services\CustomApiException;
@@ -67,10 +68,43 @@ class RulesRestController extends AbstractController
         $response = [];
         try {
             $rule = $apiService->validateAndCreate($data, Rule::class);
+            if (!$rule instanceof Rule) {
+                dump($rule);
+                return new Response(json_encode($rule), 500, ['Content-Type' => 'application/json']);
+            }
             $manager->persist($rule);
             $manager->flush();
             $response['id'] = $rule->getId();
             $response['name'] = $rule->getName();
+            $response['message'] = "Successfully updated the ruleset";
+        } catch (\Exception $e) {
+            return new Response(json_encode($e->getMessage()), 500, ['Content-Type' => 'application/json']);
+        }
+        return new Response(json_encode($response), 200, ['Content-Type' => 'application/json']);
+    }
+
+    /**
+     * @param Request $request
+     * @param ApiForm $apiService
+     * @param ObjectManager $manager
+     * @return Response
+     *
+     * @Rest\Route("/items/new", name="rest_new_item")
+     */
+    public function newItem(Request $request, ApiForm $apiService, ObjectManager $manager)
+    {
+        $data = $request->getContent();
+        $response = [];
+        dump($data);
+        try {
+            $item = $apiService->validateAndCreate($data, Item::class);
+            if (!$item instanceof Item) {
+                return new Response(json_encode($item), 500, ['Content-Type' => 'application/json']);
+            }
+            $manager->persist($item);
+            $manager->flush();
+            $response['id'] = $item->getId();
+            $response['name'] = $item->getName();
             $response['message'] = "Successfully updated the ruleset";
         } catch (\Exception $e) {
             return new Response(json_encode($e->getMessage()), 500, ['Content-Type' => 'application/json']);

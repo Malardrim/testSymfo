@@ -1,0 +1,55 @@
+{% form_theme form 'forms/custom_form.html.twig' %}
+{{ form_start(form, {'attr': {'class': 'ajax-form-symfo', 'data-pathajax': path('rest_new_item')}}) }}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-6">
+                {{ form_row(form.name) }}
+                {{ form_row(form.phases) }}
+            </div>
+            <div class="col-lg-6">
+                {{ form_row(form.type) }}
+                {{ form_row(form.faction) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-2">
+                {{ form_row(form.reach) }}
+            </div>
+            <div class="col-lg-2">
+                {{ form_row(form.strength) }}
+            </div>
+            <div class="col-lg-2">
+                {{ form_row(form.damage) }}
+            </div>
+            <div class="col-lg-2">
+                {{ form_row(form.points) }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg">
+                {{ form_row(form.description,  {'attr': {'data-serialize_ajax_handler': 'ckeditorHandler'}}) }}
+            </div>
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        <button class="btn btn-primary my-1 float-right"><i class="fas fa-save"></i> {{ button_label|default('Save') }}
+        </button>
+    </div>
+</div>
+{{ form_end(form) }}
+
+<div class="modal fade" id="ajax_response" tabindex="-1" role="dialog"
+     aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="btn btn-secondary float-right" data-dismiss="modal"><i
+                            class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="ajax_message">
+                {#Message on success or failure#}
+            </div>
+        </div>
+    </div>
+</div>

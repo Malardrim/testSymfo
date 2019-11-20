@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ApiForm
 {
@@ -21,14 +22,20 @@ class ApiForm
     private $serializer;
 
     /**
+     * @var TranslatorInterface
+     */
+    private $translator;
+
+    /**
      * ApiForm constructor.
      * @param ValidatorInterface $validator
      * @param SerializerInterface $serializer
      */
-    public function __construct(ValidatorInterface $validator, SerializerInterface $serializer)
+    public function __construct(ValidatorInterface $validator, SerializerInterface $serializer, TranslatorInterface $translator)
     {
         $this->serializer = $serializer;
         $this->validator = $validator;
+        $this->translator = $translator;
     }
 
     /**
@@ -38,14 +45,21 @@ class ApiForm
      * @param $entityClassName string Name of the entity to process
      * @param string $format Format of the data (json recommended)
      * @return array|object Result of the process if the Entity is valid
-     * @throws CustomApiException
+     * @throws \ReflectionException
      */
     public function validateAndCreate($data, $entityClassName, $format = 'json')
     {
         $result = $this->serializer->deserialize($data, $entityClassName, $format);
         $errors = $this->validator->validate($result);
         if (count($errors) > 0) {
-            throw new CustomApiException(Response::HTTP_BAD_REQUEST, (string)$errors);
+            $new_errors = [];
+            $class = strtolower((new \ReflectionClass($entityClassName))->getShortName());
+            foreach ($errors as $error){
+                $name = $class . '_' . $error->getPropertyPath();
+                $message = $this->translator->trans($error->getMessage(), $error->getParameters(), 'errors');
+                $new_errors[$name] = $message;
+            }
+            return $new_errors;
         }
         return $result;
     }

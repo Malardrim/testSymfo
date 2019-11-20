@@ -1,0 +1,9 @@
+rule:
+  name:
+    blank: Please give a name to your rule
+  origin:
+    blank: Please give the name of the rules origin
+  lastUpdateOrigin:
+    blank: Please give the name of the book containing the rules last update
+  description:
+    blank: You have to give the rule's content

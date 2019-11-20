@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -20,26 +21,31 @@ class Item
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $points;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $description;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Phase")
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $phases;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $type;
 
@@ -55,11 +61,13 @@ class Item
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $strength;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $damage;
 

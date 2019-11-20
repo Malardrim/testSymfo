@@ -22,25 +22,25 @@ class Rule
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @Assert\NotBlank(message="rule.name.blank")
      */
     private $name = "";
 
     /**
      * @ORM\Column(type="text")
-     * @Assert\NotBlank
+     * @Assert\NotBlank(message="rule.description.blank")
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @Assert\NotBlank(message="rule.origin.blank")
      */
     private $origin;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank
+     * @Assert\NotBlank(message="rule.lastUpdateOrigin.blank")
      */
     private $lastUpdateOrigin;
 

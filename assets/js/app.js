@@ -11,47 +11,12 @@ require('bootstrap');
 const fa = require("fontawesome");
 require('bootstrap-select');
 require('./dragndrop.js');
+require('./ajax_forms');
 
 $(document).ready(function () {
-    console.log("haha");
+    console.log("Main js file has been launched");
     initForms();
     $('[data-toggle="tooltip"]').tooltip();
-    $('.ajax-form-symfo').on('submit', function (e) {
-        e.preventDefault();
-        let data = {};
-        var regex = /phase/;
-        $(this).serializeArray().forEach((object) => {
-            var name = $("[name='" + object.name + "']").attr('ajax_name');
-            if (name) {
-                if (name == "phases") {
-                    if (!data[name])
-                        data[name] = [];
-                    data[name].push(object.value);
-                } else
-                    data[name] = object.value;
-            }
-        });
-        data['description'] = CKEDITOR.instances.rule_description.getData();
-        var pathajax = $(this).data('pathajax');
-        $.ajax({
-            url: pathajax,
-            data: JSON.stringify(data),
-            method: 'POST',
-            dataType: 'json',
-        }).done(function (data) {
-            $('.ajax-form-symfo').trigger('reset');
-            $('#ajax_message').html(data.message);
-            var item_rules = $("#item_rules");
-            item_rules.append(new Option(data.name, data.id));
-            item_rules.selectpicker('val', data.id);
-            item_rules.selectpicker('refresh');
-        }).fail(function (data) {
-            $('#ajax_message').html(data.responseJSON);
-        }).always(function (data) {
-            $('#newRuleModal').modal('hide');
-            $('#ajax_response').modal('show');
-        });
-    });
 });
 
 function initForms() {

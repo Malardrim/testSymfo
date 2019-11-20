@@ -3,141 +3,16 @@
 {% block title %}Test Symfony{% endblock %}
 
 {% block body %}
-    <style>
-        #outer-dropzone {
-            height: 140px;
-        }
-
-        #inner-dropzone {
-            height: 80px;
-        }
-
-        .dropzone {
-            background-color: #ccc;
-            border: dashed 4px transparent;
-            border-radius: 4px;
-            margin: 10px auto 30px;
-            padding: 10px;
-            width: 80%;
-            transition: background-color 0.3s;
-        }
-
-        .drop-active {
-            border-color: #aaa;
-        }
-
-        .drop-target {
-            background-color: #29e;
-            border-color: #fff;
-            border-style: solid;
-        }
-
-        .drag-drop {
-            display: inline-block;
-            min-width: 40px;
-            padding: 2em 0.5em;
-
-            color: #fff;
-            background-color: #29e;
-            border: solid 2px #fff;
-
-            touch-action: none;
-            -webkit-transform: translate(0px, 0px);
-            transform: translate(0px, 0px);
-
-            transition: background-color 0.3s;
-        }
-
-        .drag-drop.can-drop {
-            color: #000;
-            background-color: #4e4;
-        }
-    </style>
     <div class="container-fluid">
-        {#<div class="row mt-5">
-            <div class="col-lg-8">
-                <div class="accordion" id="phasesAccordion">
-                    {% for phase in phases %}
-                        <div class="card">
-                            <div class="card-header" id="heading-{{ phase.id }}">
-                                <h2 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse"
-                                            data-target="#collapse-phase-{{ phase.id }}"
-                                            aria-expanded="true" aria-controls="ccollapse-phase-{{ phase.id }}">
-                                        {{ phase.name }}
-                                    </button>
-                                    <span class="icon-Ynnead float-right"></span>
-                                </h2>
-                            </div>
-                            <div id="collapse-phase-{{ phase.id }}" class="collapse"
-                                 aria-labelledby="heading-{{ phase.id }}">
-                                <div class="card-body">
-                                    {% for rule in rules if phase in rule.phases %}
-                                        <h3>{{ rule.name }}</h3>
-                                        <p>{{ rule.description|raw }}</p>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
+        <div class="row">
+            <div class="offset-2 col-lg-8 mt-5">
+                <h1 class="text-center">Homepage</h1>
             </div>
-            <div class="col-lg-4">
-                <div class="accordion" id="ruleAccordion">
-                    {% for rule in rules if rule.phases is empty %}
-                        <div class="card">
-                            <div class="card-header" id="headingRule{{ rule.id }}">
-                                <h2 class="mb-0">
-                                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                            data-target="#collapseRule{{ rule.id }}" aria-expanded="false"
-                                            aria-controls="collapseRule{{ rule.id }}">
-                                        {{ rule.name }}
-                                    </button>
-                                </h2>
-                            </div>
-                            <div id="collapseRule{{ rule.id }}" class="collapse"
-                                 aria-labelledby="headingRule{{ rule.id }}">
-                                <div class="card-body">
-                                    <h4>{{ rule.name }}</h4>
-                                    <p>{{ rule.description|raw }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-                #}{#<div class="accordion" id="rulesAccordion">
-                    {% for rule in rules if rule.phases is empty %}
-                        <div class="card">
-                            <div class="card-header" id="heading-rule-{{ rule.id }}">
-                                <h2 class="mb-0">
-                                    <button class="btn btn-link" type="button" data-toggle="collapse"
-                                            data-target="#ccollapse-rule-{{ rule.id }}"
-                                            aria-expanded="true" aria-controls="collapse-rule-{{ rule.id }}">
-                                        {{ rule.name }}
-                                    </button>
-                                </h2>
-                            </div>
-
-                            <div id="collapse-rule-{{ rule.id }}" class="collapse"
-                                 aria-labelledby="heading-rule-{{ rule.id }}"
-                                 data-parent="#rulesAccordion">
-                                <div class="card-body">
-                                    <h3>{{ rule.name }}</h3>
-                                    <p>{{ rule.description }}</p>
-                                </div>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>#}{#
+        </div>
+        <div class="row">
+            <div class="offset-2 col-lg-8 my-5">
+                {% include 'item/_form_ajax.html.twig' %}
             </div>
-        </div>#}
-        <div id="no-drop" class="drag-drop">#no-drop</div>
-
-        <div id="yes-drop" class="drag-drop">#yes-drop</div>
-
-        <div id="outer-dropzone" class="dropzone">
-            #outer-dropzone
-            <div id="inner-dropzone" class="dropzone">#inner-dropzone</div>
         </div>
     </div>
 {% endblock %}
