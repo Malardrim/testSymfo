@@ -61,6 +61,9 @@ $(document).ready(function () {
             data: JSON.stringify(data),
             method: 'POST',
             dataType: 'json',
+            beforeSend: function () {
+                $(".loader").removeClass('loader').addClass('loading').addClass('disabled');
+            }
         }).done(function (data) {
             $('.ajax-form-symfo').trigger('reset');
             $('#ajax_message').html(data.message);
@@ -74,6 +77,7 @@ $(document).ready(function () {
                 $('#' + i).after('<span class="badge badge-danger error-msg">' + item + '</span>');
             });
         }).always(function (data) {
+            $(".loading").removeClass('loading').addClass('loader').removeClass('disabled');
             $('#ajax_response').modal('show');
         });
     });

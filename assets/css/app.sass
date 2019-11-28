@@ -14,3 +14,20 @@ $font-eldar: 'EldarRunes', sans-serif
 
 .font-eldar
   font-family: $font-eldar
+
+.font-lg
+  @include font-size(1.6rem)
+
+.loading
+  &>.stable
+    display: none
+  &>.working
+    display: inline-block
+  .disabled
+    pointer-events: none !important
+
+.loader
+  &>.stable
+    display: inline-block
+  &>.working
+    display: none
