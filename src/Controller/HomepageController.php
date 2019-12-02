@@ -43,6 +43,7 @@ class HomepageController extends AbstractController
 
         $client = HttpClient::create();
         $response = $client->request('GET', "https://raw.githubusercontent.com/BSData/wh40k/master/Aeldari%20-%20Craftworlds.cat");
+        //$response = $client->request('GET', "https://www.w3schools.com/xml/simple.xml");
         //$data = $serializer->deserialize($response->getContent(), "xml", "array");
         $crawler = new Crawler($response->getContent());
         $res = [];

@@ -4,35 +4,38 @@
 
 {% macro recursiveNodes(nodes) %}
     {% for node in nodes %}
-        {% if node.childNodes is defined %}
-            <ul>
-                <li>Node name: <h6>{{ node.nodeName }}</h6></li>
-                {% if node.attributes is defined and node.nodeName != "#text" %}
-                    <ul>
-                        {% for attr in node.attributes if attr is defined %}
-                            <li>@{{ attr.nodeName }}: {{ attr.nodeValue }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-                <li>
-                    {{ _self.recursiveNodes(node.childNodes) }}
-                </li>
-            </ul>
+        {% if node.wholeText is defined and node.wholeText != null %}
+            {#Desc: {{ node.wholeText }}#}
         {% else %}
-            <li class="lastChild">
-                {% if node.nodeName is defined %}
-                    {{ node.nodeName }}
-                {% elseif node.0.nodeName is defined %}
-                    {{ node.0.nodeName }}
-                {% endif %}
-                {% if node.attributes is defined %}
-                    <ul>
-                        {% for attr in node.attributes if attr is defined %}
-                            <li>@{{ attr.nodeName }}: {{ attr.nodeValue }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </li>
+            {% if node.childNodes is defined and node.childNodes != null %}
+                <ul class="collapsable-ul bg-secondary">
+                    <li>Node name: <h6>{{ node.nodeName }}</h6>
+                    {% if node.attributes is defined %}
+                        <ul class="collapsable-ul bg-secondary">
+                            {% for attr in node.attributes if attr is defined %}
+                                <li>@{{ attr.nodeName }}: {{ attr.nodeValue }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {{ _self.recursiveNodes(node.childNodes) }}
+                </ul>
+            {% else %}
+                <li class="lastChild">
+                    {% if node.nodeName is defined %}
+                        {{ node.nodeName }}
+                    {% elseif node.0.nodeName is defined %}
+                        {{ node.0.nodeName }}
+                    {% endif %}
+                    {% if node.attributes is defined %}
+                        <ul>
+                            {% for attr in node.attributes if attr is defined %}
+                                <li>@{{ attr.nodeName }}: {{ attr.nodeValue }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endif %}
         {% endif %}
     {% endfor %}
 {% endmacro %}
