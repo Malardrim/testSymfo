@@ -17,6 +17,11 @@ $(document).ready(function () {
     console.log("Main js file has been launched");
     initForms();
     $('[data-toggle="tooltip"]').tooltip();
+    document.querySelectorAll('ul').forEach(function (node) {
+        node.addEventListener('click', function (elem) {
+            elem.querySelectorAll('li').style.display = "none";
+        });
+    })
 });
 
 function initForms() {
