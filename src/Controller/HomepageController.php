@@ -2,13 +2,16 @@
 
 namespace App\Controller;
 
+use App\Entity\Catalogue;
 use App\Entity\CategoryEntry;
+use App\Entity\Entry;
 use App\Entity\Item;
 use App\Entity\Rule;
 use App\Form\ItemType;
 use App\Form\RuleType;
 use App\Services\ImportBSManager;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DomCrawler\Crawler;
@@ -23,33 +26,24 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class HomepageController extends AbstractController
 {
-
-
     /**
      * @Route("/", name="homepage")
      * @param ImportBSManager $importBSManager
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @return Response
      */
-    public function index(ImportBSManager $importBSManager, ObjectManager $manager)
+    public function index(ImportBSManager $importBSManager, EntityManagerInterface $manager)
     {
-        $res = [];
-        try {
-            $importBSManager->importCategoryEntries();
-            $res = $importBSManager->deserializeLink();
-        } catch (ClientExceptionInterface $e) {
-            dump($e->getTraceAsString());
-        } catch (RedirectionExceptionInterface $e) {
-            dump($e->getTraceAsString());
-        } catch (ServerExceptionInterface $e) {
-            dump($e->getTraceAsString());
-        } catch (TransportExceptionInterface $e) {
-            dump($e->getTraceAsString());
+        //$res = $importBSManager->deserializeLink();
+        //$importBSManager->importCatalogue();
+        $catalogues = $manager->getRepository(Catalogue::class)->findAll();
+        foreach ($catalogues as $catalogue) {
+            $catalogue->setEntriesNb(count($manager->getRepository(Entry::class)->findBy(['catalogueId' => $catalogue->getId()])));
         }
         $form = $this->createForm(ItemType::class, new Item());
         return $this->render('homepage/index.html.twig', [
             'form' => $form->createView(),
-            'nodes' => $res,
+            'catalogues' => $catalogues,
         ]);
     }
 }

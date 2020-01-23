@@ -49,7 +49,20 @@
         </div>
         <div class="row">
             <div class="offset-2 col-lg-8 my-5">
-                {{ _self.recursiveNodes(nodes) }}
+                {#{{ _self.recursiveNodes(nodes) }}#}
+                {% for catalogue in catalogues %}
+                    <div class="col-12">
+                        <h3>
+                            {{ catalogue.name }}: {{ catalogue.id }}<br>
+                            <small>Number of entries: {{ catalogue.entriesNb }}</small>
+                        </h3>
+                        <ul>
+                            {% for key, property in catalogue.properties|keys %}
+                                <li>@{{ property }}: {{ catalogue.properties[property] }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endfor %}
             </div>
         </div>
     </div>

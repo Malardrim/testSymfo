@@ -2,15 +2,21 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EntryRepository")
  * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ApiResource(
+ *     collectionOperations={"get"},
+ *     itemOperations={"get"}
+ * )
  */
 class Entry
 {
     /**
+     * An entry, it's a generic data to get
      * @ORM\Id()
      * @ORM\Column(type="string")
      */
@@ -31,6 +37,12 @@ class Entry
      * @ORM\Column(type="boolean", nullable=true)
      */
     private $hidden;
+
+    /**
+     * @var string
+     * @ORM\Column(type="string", length=255)
+     */
+    private $catalogueId;
 
     public function getName(): ?string
     {
@@ -102,5 +114,23 @@ class Entry
      */
     public function removeProperty($property){
         unset($this->properties[$property]);
+    }
+
+    /**
+     * @param string $catalogueId
+     * @return Entry
+     */
+    public function setCatalogueId(string $catalogueId): Entry
+    {
+        $this->catalogueId = $catalogueId;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCatalogueId(): string
+    {
+        return $this->catalogueId;
     }
 }

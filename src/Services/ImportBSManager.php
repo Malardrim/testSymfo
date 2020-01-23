@@ -4,9 +4,11 @@
 namespace App\Services;
 
 
+use App\Entity\Catalogue;
 use App\Entity\CategoryEntry;
 use App\Entity\SelectionEntry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -19,12 +21,24 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class ImportBSManager
 {
+
+    const GENERIC_ENTRY_MANAGER = 'mangeGenericEntry';
+
     /**
      * @var ObjectManager
      */
     private $manager;
 
-    public function __construct(ObjectManager $manager)
+    /**
+     * @var string
+     */
+    private $catalogueId = null;
+
+    /**
+     * ImportBSManager constructor.
+     * @param EntityManagerInterface $manager
+     */
+    public function __construct(EntityManagerInterface $manager)
     {
         $this->manager = $manager;
     }
@@ -95,6 +109,33 @@ class ImportBSManager
                 }
             }
             if (!$this->manager->getRepository(get_class($entity))->findOneBy(['id' => $entity->getId()])){
+                $entity->setCatalogueId($this->catalogueId);
+                $this->manager->persist($entity);
+            }
+        }
+    }
+
+    /**
+     * @param $entry
+     * @param $class
+     * @throws ReflectionException
+     */
+    public function mangeCatalogueEntry($entry, $class = "CategoryEntry")
+    {
+        $reflection = new ReflectionClass($class);
+        if (!empty($entry->nodeName) && ucfirst($entry->nodeName) == $reflection->getShortName() && !empty($entry->attributes)) {
+            $entity = new $class();
+            foreach ($entry->attributes as $attribute) {
+                $setter = "set" . ucfirst($attribute->nodeName);
+                if (method_exists($entity, $setter)) {
+                    $entity->$setter($attribute->nodeValue);
+                }else{
+                    $entity->addProperty($attribute->nodeName, $attribute->nodeValue);
+                }
+            }
+            if (!$this->manager->getRepository(get_class($entity))->findOneBy(['id' => $entity->getId()])){
+                $this->catalogueId = $entity->getId();
+                $entity->setCatalogueId($this->catalogueId);
                 $this->manager->persist($entity);
             }
         }
@@ -103,11 +144,12 @@ class ImportBSManager
     /**
      *
      */
-    public function importCategoryEntries()
+    public function importCatalogue()
     {
         $data = $this->deserializeLink();
-        $this->recursiveMapping($data, "mangeGenericEntry", CategoryEntry::class);
-        $this->recursiveMapping($data, "mangeGenericEntry", SelectionEntry::class);
+        $this->recursiveMapping($data, "mangeCatalogueEntry", Catalogue::class);
+        $this->recursiveMapping($data, self::GENERIC_ENTRY_MANAGER, CategoryEntry::class);
+        $this->recursiveMapping($data, self::GENERIC_ENTRY_MANAGER, SelectionEntry::class);
         $this->manager->flush();
 
     }
