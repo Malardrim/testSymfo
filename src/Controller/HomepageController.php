@@ -28,22 +28,30 @@ class HomepageController extends AbstractController
 {
     /**
      * @Route("/", name="homepage")
-     * @param ImportBSManager $importBSManager
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    public function index(ImportBSManager $importBSManager, EntityManagerInterface $manager)
+    public function index(EntityManagerInterface $manager)
     {
-        //$res = $importBSManager->deserializeLink();
-        //$importBSManager->importCatalogue();
         $catalogues = $manager->getRepository(Catalogue::class)->findAll();
         foreach ($catalogues as $catalogue) {
             $catalogue->setEntriesNb(count($manager->getRepository(Entry::class)->findBy(['catalogueId' => $catalogue->getId()])));
         }
-        $form = $this->createForm(ItemType::class, new Item());
         return $this->render('homepage/index.html.twig', [
-            'form' => $form->createView(),
             'catalogues' => $catalogues,
+        ]);
+    }
+
+    /**
+     * @Route("/data_raw", name="dump_data")
+     * @param ImportBSManager $importBSManager
+     * @return Response
+     */
+    public function dataAction(ImportBSManager $importBSManager)
+    {
+        $res = $importBSManager->deserializeLink();
+        return $this->render('homepage/data.html.twig', [
+            'nodes' => $res,
         ]);
     }
 }

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Test Symfony{% endblock %}
+
+{% macro recursiveNodes(nodes) %}
+    {% for node in nodes %}
+        {% if node.wholeText is defined and node.wholeText != null %}
+            {#Desc: {{ node.wholeText }}#}
+        {% else %}
+            {% if node.childNodes is defined and node.childNodes != null %}
+                <ul class="collapsable-ul bg-secondary">
+                    <li>Node name: <h6>{{ node.nodeName }}</h6>
+                    {% if node.attributes is defined %}
+                        <ul class="collapsable-ul bg-secondary">
+                            {% for attr in node.attributes if attr is defined %}
+                                <li>@{{ attr.nodeName }}: {{ attr.nodeValue }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% endif %}
+                    {{ _self.recursiveNodes(node.childNodes) }}
+                </ul>
+            {% else %}
+                <li class="lastChild">
+                    {% if node.nodeName is defined %}
+                        {{ node.nodeName }}
+                    {% elseif node.0.nodeName is defined %}
+                        {{ node.0.nodeName }}
+                    {% endif %}
+                    {% if node.attributes is defined %}
+                        <ul>
+                            {% for attr in node.attributes if attr is defined %}
+                                <li>@{{ attr.nodeName }}: {{ attr.nodeValue }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="offset-2 col-lg-8 mt-5">
+                <h1 class="text-center">Dump</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="offset-2 col-lg-8 my-5">
+                {{ _self.recursiveNodes(nodes) }}
+            </div>
+        </div>
+    </div>
+{% endblock %}
