@@ -1,0 +1,11 @@
+{% block api_data_content %}
+    <div class="col-12">
+        <fieldset>
+            <label class="control-label" for="tokenInput">Token</label>
+            <input class="form-control" id="tokenInput" type="text" value="{{ token }}" readonly>
+        </fieldset>
+        <button class="btn btn-primary" data-clipboard-target="#tokenInput" data-toggle="tooltip" data-title="Copy the token" data-success="Copied!">
+            Copy
+        </button>
+    </div>
+{% endblock %}
