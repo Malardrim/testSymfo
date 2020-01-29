@@ -16,5 +16,26 @@ use ApiPlatform\Core\Annotation\ApiResource;
  */
 class SelectionEntry extends Entry
 {
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    protected $type;
 
+    /**
+     * @param mixed $type
+     * @return SelectionEntry
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
 }

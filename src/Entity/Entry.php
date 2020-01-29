@@ -26,21 +26,37 @@ class Entry
      * @var array
      * @ORM\Column(type="json_array", nullable=true)
      */
-    protected $properties;
+    protected $properties = [];
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @var string
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    protected $dataType;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Entry", inversedBy="children")
+     */
+    protected $parent;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Entry", mappedBy="parent")
+     */
+    protected $children;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $name;
 
     /**
-     * @ORM\Column(type="boolean", nullable=true)
+     * @ORM\Column(type="boolean", nullable=true, nullable=true)
      */
     private $hidden;
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $catalogueId;
 
@@ -132,5 +148,66 @@ class Entry
     public function getCatalogueId(): string
     {
         return $this->catalogueId;
+    }
+
+    /**
+     * @param Entry $parent
+     * @return Entry
+     */
+    public function setParent(Entry $parent): Entry
+    {
+        $this->parent = $parent;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getParent(): string
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param mixed $children
+     * @return Entry
+     */
+    public function setChildren($children)
+    {
+        $this->children = $children;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+
+    /**
+     * @param Entry $entry
+     */
+    public function addChild(Entry $entry){
+        $this->children[] = $entry;
+    }
+
+    /**
+     * @param string $dataType
+     * @return Entry
+     */
+    public function setDataType(string $dataType): Entry
+    {
+        $this->dataType = $dataType;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDataType(): string
+    {
+        return $this->dataType;
     }
 }

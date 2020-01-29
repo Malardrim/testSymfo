@@ -19,22 +19,32 @@ class SelectionEntryRepository extends ServiceEntityRepository
         parent::__construct($registry, SelectionEntry::class);
     }
 
-    // /**
-    //  * @return SelectionEntry[] Returns an array of SelectionEntry objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param $value string
+     * @return SelectionEntry[] Returns an array of SelectionEntry objects
+     */
+    public function findByType($value)
     {
         return $this->createQueryBuilder('s')
-            ->andWhere('s.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('s.id', 'ASC')
-            ->setMaxResults(10)
+            ->where("s.type LIKE :value")
+            ->setParameter('value', "%$value%")
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
+
+    /**
+     * @param $values array
+     * @return SelectionEntry[] Returns an array of SelectionEntry objects
+     */
+    public function findByTypes($values)
+    {
+        return $this->createQueryBuilder('s')
+            ->where("s.type IN(:values)")
+            ->setParameter('values', $values)
+            ->getQuery()
+            ->getResult();
+    }
+
 
     /*
     public function findOneBySomeField($value): ?SelectionEntry

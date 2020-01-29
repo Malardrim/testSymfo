@@ -1,11 +1,21 @@
 {% block api_data_content %}
-    <div class="col-12">
-        <fieldset>
-            <label class="control-label" for="tokenInput">Token</label>
-            <input class="form-control" id="tokenInput" type="text" value="{{ token }}" readonly>
-        </fieldset>
-        <button class="btn btn-primary" data-clipboard-target="#tokenInput" data-toggle="tooltip" data-title="Copy the token" data-success="Copied!">
-            Copy
-        </button>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group">
+                <label class="control-label" for="tokenInput">Token</label>
+                <div class="input-group mb-3">
+                    <input class="form-control" id="tokenInput" type="text" value="{{ token }}" readonly>
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary btn-inline-form" data-clipboard-target="#tokenInput" data-toggle="tooltip"
+                                data-title="Copy the token" role="button">
+                            Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="offset-1 col-11">
+            <p>This token only lasts for an hour or so, it's available here only to test some cases</p>
+        </div>
     </div>
 {% endblock %}

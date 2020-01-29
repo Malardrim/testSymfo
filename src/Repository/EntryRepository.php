@@ -19,6 +19,20 @@ class EntryRepository extends ServiceEntityRepository
         parent::__construct($registry, Entry::class);
     }
 
+    /**
+     * @param $catalogueId
+     * @return mixed
+     */
+    public function deleteByCatalogue($catalogueId)
+    {
+        return $this->createQueryBuilder('entry')
+            ->delete('App:Entry', 'e')
+            ->Where('e.catalogueId LIKE :val')
+            ->setParameter('val', $catalogueId)
+            ->getQuery()->execute()
+            ;
+    }
+
     // /**
     //  * @return Entry[] Returns an array of Entry objects
     //  */

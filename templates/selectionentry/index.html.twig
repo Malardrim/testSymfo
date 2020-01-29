@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Selection entries{% endblock %}
+{% block body %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="offset-1 col-10">
+                <ul>
+                {% for entry in entries %}
+                    <li>
+                        {{ entry.name }}
+                        <ul>
+                            {% for key, property in entry.properties|keys %}
+                                <li>@{{ property }}: {{ dump(entry.properties[property]) }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

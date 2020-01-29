@@ -15,7 +15,7 @@
                 <a class="nav-link" href="{{ path('phase_index') }}">Phases</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="{{ path('item_index') }}">Items</a>
+                <a class="nav-link" href="{{ path('selectionentry_index') }}">Units</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dump</a>
@@ -36,6 +36,8 @@
                     <a class="nav-link dropdown-toggle active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Hello {{ app.user.username }}</a>
                     <div class="dropdown-menu">
                         <a class="dropdown-item" href="{{ path('account_index') }}">Account</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="{{ path('account_index') }}#apiData">Api Infos</a>
                     </div>
                 </li>
                 <li class="nav-item">

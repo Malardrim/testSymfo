@@ -6,6 +6,7 @@ namespace App\Services;
 
 use App\Entity\Catalogue;
 use App\Entity\CategoryEntry;
+use App\Entity\Entry;
 use App\Entity\SelectionEntry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -92,32 +93,44 @@ class ImportBSManager
 
     /**
      * @param $entry
-     * @param $class
-     * @throws ReflectionException
+     * @param null $parent
+     * @return string
      */
-    public function mangeGenericEntry($entry, $class = "CategoryEntry")
+    public function mangeGenericEntry($entry, $parent = null)
     {
-        $reflection = new ReflectionClass($class);
-        if (!empty($entry->nodeName) && ucfirst($entry->nodeName) == $reflection->getShortName() && !empty($entry->attributes)) {
-            $entity = new $class();
-            foreach ($entry->attributes as $attribute) {
-                $setter = "set" . ucfirst($attribute->nodeName);
-                if (method_exists($entity, $setter)) {
-                    $entity->$setter($attribute->nodeValue);
-                }else{
-                    $entity->addProperty($attribute->nodeName, $attribute->nodeValue);
+        $entity = null;
+        if (!empty($entry->nodeName) && !empty($entry->attributes)) {
+            $class = "App\\Entity\\" . ucfirst($entry->nodeName);
+            if (class_exists($class) && is_subclass_of($class, Entry::class)) {
+                $entity = new $class();
+            } else {
+                $entity = new Entry();
+                $entity->setDataType($entry->nodeName);
+            }
+            if ($entity instanceof Entry) {
+                foreach ($entry->attributes as $attribute) {
+                    $setter = "set" . ucfirst($attribute->nodeName);
+                    if (method_exists($entity, $setter)) {
+                        $entity->$setter($attribute->nodeValue);
+                    } else {
+                        $entity->addProperty($attribute->nodeName, $attribute->nodeValue);
+                    }
+                }
+                if ($parent) {
+                    $entity->setParent($parent);
+                }
+                $entity->setCatalogueId($this->catalogueId);
+                if ($entity->getId() == null) {
+                    $entity->setId(uniqid('unknown'));
                 }
             }
-            if (!$this->manager->getRepository(get_class($entity))->findOneBy(['id' => $entity->getId()])){
-                $entity->setCatalogueId($this->catalogueId);
-                $this->manager->persist($entity);
-            }
         }
+        return $entity;
     }
 
     /**
      * @param $entry
-     * @param $class
+     * @param string $class
      * @throws ReflectionException
      */
     public function mangeCatalogueEntry($entry, $class = "CategoryEntry")
@@ -129,11 +142,11 @@ class ImportBSManager
                 $setter = "set" . ucfirst($attribute->nodeName);
                 if (method_exists($entity, $setter)) {
                     $entity->$setter($attribute->nodeValue);
-                }else{
+                } else {
                     $entity->addProperty($attribute->nodeName, $attribute->nodeValue);
                 }
             }
-            if (!$this->manager->getRepository(get_class($entity))->findOneBy(['id' => $entity->getId()])){
+            if (!$this->manager->getRepository(get_class($entity))->findOneBy(['id' => $entity->getId()])) {
                 $this->catalogueId = $entity->getId();
                 $entity->setCatalogueId($this->catalogueId);
                 $this->manager->persist($entity);
@@ -147,17 +160,36 @@ class ImportBSManager
     public function importCatalogue()
     {
         $data = $this->deserializeLink();
-        $this->recursiveMapping($data, "mangeCatalogueEntry", Catalogue::class);
-        $this->recursiveMapping($data, self::GENERIC_ENTRY_MANAGER, CategoryEntry::class);
-        $this->recursiveMapping($data, self::GENERIC_ENTRY_MANAGER, SelectionEntry::class);
+        $this->catalogueId = $data[0]->attributes->getNamedItem('id')->value;
+        $this->cleanCatalogue();
+        $this->importEntryRecursive($data);
         $this->manager->flush();
 
+    }
+
+    protected function cleanCatalogue()
+    {
+        $this->manager->getRepository(Entry::class)->deleteByCatalogue($this->catalogueId);
+    }
+
+    public function importEntryRecursive($data, $parent = null)
+    {
+        foreach ($data as $datum) {
+            $elem = $this->mangeGenericEntry($datum, $parent);
+            if (!empty($datum->childNodes)) {
+                $this->importEntryRecursive($datum->childNodes, $elem);
+            }
+            if ($elem instanceof Entry) {
+                $this->manager->persist($elem);
+            }
+        }
     }
 
     /**
      * @param $data
      * @param $callback
      * @param null $class
+     * @return string
      */
     public function recursiveMapping($data, $callback, $class = null)
     {

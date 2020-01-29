@@ -19,15 +19,36 @@ $font-eldar: 'EldarRunes', sans-serif
   @include font-size(1.6rem)
 
 .loading
-  &>.stable
+  & > .stable
     display: none
-  &>.working
+
+  & > .working
     display: inline-block
+
   .disabled
     pointer-events: none !important
 
 .loader
-  &>.stable
+  & > .stable
     display: inline-block
-  &>.working
+
+  & > .working
     display: none
+
+.btn.btn-inline-form
+  padding:
+    top: 0.5rem
+    bottom: 0.5rem
+  text-transform: none
+
+.nav-account
+  & > .nav-item
+    &:hover
+      & > a
+        background-color: $gray-200
+        color: $primary
+    & > a
+      border: solid 1px $gray-400
+      &.active
+        background-color: $primary
+        color: $secondary

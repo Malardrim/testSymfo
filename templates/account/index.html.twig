@@ -14,9 +14,9 @@
         </div>
         <div class="row my-2">
             <div class="col-3 offset-1">
-                <ul class="nav flex-column">
+                <ul class="nav flex-column nav-account">
                     {% for block in blocks %}
-                        <li class="nav-item border-secondary border my-1">
+                        <li class="nav-item py-1">
                             <a class="nav-link{% if loop.first %} active{% endif %}" data-toggle="tab" href="#{{ block.id }}">{{ block.header }}</a>
                         </li>
                     {% endfor %}
@@ -35,4 +35,13 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var url = window.location.href;
+        var hash = url.substring(url.indexOf("#")+1);
+        $('[href="#'+hash+'"]').tab('show');
+    </script>
 {% endblock %}
