@@ -1,21 +1,37 @@
 {% extends 'base.html.twig' %}
-
+{% macro recursiveEntries(entries) %}
+    {% for entry in entries %}
+        <li>
+            {% if entry.name is defined and entry.name %}
+                {{ entry.name }}
+            {% else %}
+                {{ entry.dataType }}
+            {% endif %}
+            <ul>
+                {% for key, property in entry.properties|keys %}
+                    {% if entry.properties[property].dataType is defined and entry.properties[property].name is defined %}
+                        <li>@{{ entry.properties[property].dataType|default('RegisteredEntry ') }}: {{ entry.properties[property].name }}</li>
+                    {% else %}
+                        <li>@{{ property }}: {{ entry.properties[property] }}</li>
+                    {% endif %}
+                {% endfor %}
+                {% if entry.children|length > 0 %}
+                    <li>
+                        {{ _self.recursiveEntries(entry.children) }}
+                    </li>
+                {% endif %}
+            </ul>
+        </li>
+    {% endfor %}
+{% endmacro %}
 {% block title %}Selection entries{% endblock %}
 {% block body %}
     <div class="container-fluid">
         <div class="row">
             <div class="offset-1 col-10">
                 <ul>
-                {% for entry in entries %}
-                    <li>
-                        {{ entry.name }}
-                        <ul>
-                            {% for key, property in entry.properties|keys %}
-                                <li>@{{ property }}: {{ dump(entry.properties[property]) }}</li>
-                            {% endfor %}
-                        </ul>
-                    </li>
-                {% endfor %}
+                    Elems: {{ entries|length }}
+                    {{ _self.recursiveEntries(entries) }}
                 </ul>
             </div>
         </div>

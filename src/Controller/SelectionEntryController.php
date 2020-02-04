@@ -4,8 +4,10 @@
 namespace App\Controller;
 
 
+use App\Entity\CategoryEntry;
 use App\Entity\Entry;
 use App\Entity\SelectionEntry;
+use App\Repository\EntryRepository;
 use App\Repository\SelectionEntryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -22,51 +24,64 @@ class SelectionEntryController extends AbstractController
 {
 
     /**
-     * @param SelectionEntry $selectionEntry
+     * @param Entry $selectionEntry
      * @param EntityManagerInterface $manager
+     * @param $types array
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function hydrateSelectionEntry(SelectionEntry $selectionEntry, EntityManagerInterface $manager)
+    public function hydrateEntry(Entry $selectionEntry, EntityManagerInterface $manager, $types)
     {
-        $func = function ($val) {
-            return $val['dataType'];
-        };
-        $types = array_map($func, $manager->createQueryBuilder()
-            ->select('en.dataType')
-            ->from(Entry::class, 'en')
-            ->where('en.dataType IS NOT NULL')
-            ->groupBy('en.dataType')
-            ->getQuery()
-            ->getResult());
         foreach ($selectionEntry->getProperties() as $key => $property) {
-            $trimName = str_replace('Id', '', $key);
-            if (in_array($trimName, $types)) {
-                $val = $manager->createQueryBuilder()
-                    ->select('en')
-                    ->from(Entry::class, 'en')
-                    ->where('en.id LIKE :id_val')
-                    ->setParameter('id_val', $property)
-                    ->getQuery()
-                    ->getSingleResult();
-                $selectionEntry->addProperty($key, $val);
+            try {
+                if (preg_match('/^.*Id$/', $key)) {
+                    $val = $manager->createQueryBuilder()
+                        ->select('en')
+                        ->from(Entry::class, 'en')
+                        ->where('en.id LIKE :id_val')
+                        ->setParameter('id_val', $property)
+                        ->getQuery()
+                        ->getSingleResult();
+                    if ($val){
+                        $selectionEntry->addProperty($key, $val);
+                        $selectionEntry->addProperty("$key Class", get_class($val));
+                    }
+                }
+            } catch (\Exception $exception){
+                //dump($exception->getMessage());
+            }
+        }
+        if (count($selectionEntry->getChildren()) > 0){
+            foreach ($selectionEntry->getChildren() as $child) {
+                $this->hydrateEntry($child, $manager, $types);
             }
         }
     }
 
     /**
-     * @param SelectionEntryRepository $entryRepository
+     * @param EntryRepository $entryRepository
      * @param EntityManagerInterface $manager
      * @return Response
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      * @Route("/", name="selectionentry_index")
      */
-    public function indexAction(SelectionEntryRepository $entryRepository, EntityManagerInterface $manager)
+    public function indexAction(EntryRepository $entryRepository, EntityManagerInterface $manager)
     {
-        $entries = $entryRepository->findByTypes(['unit', 'model']);
+        /*$func = function ($val) {
+            return $val['dataType'];
+        };*/
+        /*$types = array_map($func, $manager->createQueryBuilder()
+            ->select('en.dataType')
+            ->from(Entry::class, 'en')
+            ->where('en.dataType IS NOT NULL')
+            ->groupBy('en.dataType')
+            ->getQuery()
+            ->getResult());*/
+        $entries = $entryRepository->findBy(['catalogueId' => '30b2-6f64-b85e-b4dc', 'dataType' => 'profile'], [], 20);
+        $types[] = 'target';
         foreach ($entries as $entry) {
-            $this->hydrateSelectionEntry($entry, $manager);
+            $this->hydrateEntry($entry, $manager, null);
         }
         return $this->render("selectionentry/index.html.twig", [
             "entries" => $entries

@@ -204,9 +204,9 @@ class Entry
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getDataType(): string
+    public function getDataType()
     {
         return $this->dataType;
     }

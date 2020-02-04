@@ -22,7 +22,7 @@ use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 class ImportBSManager
 {
-
+    const MAIN_DATA_URL = "https://raw.githubusercontent.com/BSData/wh40k/master/Warhammer%2040%2C000%208th%20Edition.gst";
     const GENERIC_ENTRY_MANAGER = 'mangeGenericEntry';
 
     /**
@@ -116,6 +116,10 @@ class ImportBSManager
                         $entity->addProperty($attribute->nodeName, $attribute->nodeValue);
                     }
                 }
+                if ($entry->nodeName == "constraint"){
+                    $entity->addProperty("id", $entity->getId());
+                    $entity->setId(uniqid("constraint"));
+                }
                 if ($parent) {
                     $entity->setParent($parent);
                 }
@@ -154,6 +158,13 @@ class ImportBSManager
         }
     }
 
+    public function importMainData(){
+        $this->catalogueId = "mainData";
+        $data = $this->deserializeLink(self::MAIN_DATA_URL);
+        $this->importEntryRecursive($data);
+        $this->manager->flush();
+    }
+
     /**
      *
      */
@@ -179,7 +190,7 @@ class ImportBSManager
             if (!empty($datum->childNodes)) {
                 $this->importEntryRecursive($datum->childNodes, $elem);
             }
-            if ($elem instanceof Entry) {
+            if ($elem instanceof Entry && empty($this->manager->getUnitOfWork()->getIdentityMap()[Entry::class][$elem->getId()])) {
                 $this->manager->persist($elem);
             }
         }
