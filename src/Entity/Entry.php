@@ -50,6 +50,11 @@ class Entry
     private $name;
 
     /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $value;
+
+    /**
      * @ORM\Column(type="boolean", nullable=true, nullable=true)
      */
     private $hidden;
@@ -161,9 +166,9 @@ class Entry
     }
 
     /**
-     * @return string
+     * @return Entry
      */
-    public function getParent(): string
+    public function getParent(): Entry
     {
         return $this->parent;
     }
@@ -209,5 +214,28 @@ class Entry
     public function getDataType()
     {
         return $this->dataType;
+    }
+
+    /**
+     * @param mixed $value
+     * @return Entry
+     */
+    public function setValue($value)
+    {
+        $this->value = $value;
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getValue()
+    {
+        return $this->value;
+    }
+
+    public function __toString()
+    {
+        return get_class($this) . ": " . $this->getName();
     }
 }

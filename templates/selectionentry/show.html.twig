@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+{% macro recursiveEntries(entries) %}
+    {% for entry in entries %}
+        {% if entry.children|length > 0 %}
+            {% set children_class = 'parent-list' %}
+        {% else %}
+            {% set children_class = 'child-list' %}
+        {% endif %}
+        <li class="{{ children_class }} list-group-item collapse show" data-parent="#{{ entry.parent.id }}">
+            {% if entry.children|length > 0 %}
+                {% if entry.name is defined and entry.name %}
+                    <button class="btn btn-primary btn-sm"
+                            data-target="#{{ entry.id }}">{{ entry.name }}</button>
+                    <span class="badge badge-warning badge-pill mx-2">Children: {{ entry.children|length }}</span>
+                    <span class="badge badge-success badge-pill">Properties: {{ entry.properties|length }}</span>
+                {% else %}
+                    <button class="btn btn-primary btn-sm"
+                            data-target="#{{ entry.id }}">{{ entry.dataType|title }}</button>
+                    <span class="badge badge-warning badge-pill">Children: {{ entry.children|length }}</span>
+                    <span class="badge badge-success badge-pill">Properties: {{ entry.properties|length }}</span>
+                {% endif %}
+            {% else %}
+                {% if entry.name is defined and entry.name %}
+                    <button class="btn btn-primary btn-sm"
+                            data-target="#{{ entry.id }}">{{ entry.name }}</button>
+                    <span class="badge badge-success badge-pill mx-2">Properties: {{ entry.properties|length }}</span>
+                    <br>
+                {% else %}
+                    <button class="btn btn-primary btn-sm"
+                            data-target="#{{ entry.id }}">{{ entry.dataType|title }}</button>
+                    <span class="badge badge-success badge-pill mx-2">Properties: {{ entry.properties|length }}</span>
+                    <br>
+                {% endif %}
+            {% endif %}
+            <ul id="{{ entry.id }}" class="collapse show list-group border-0 my-3">
+                {% for key, property in entry.properties|keys %}
+                    {% if entry.properties[property].dataType is defined and entry.properties[property].name is defined %}
+                        <li class="list-group-item border-0 py-0">
+                            @{{ entry.properties[property].dataType|default('RegisteredEntry ')|title }}
+                            : {{ entry.properties[property].name }}</li>
+                    {% else %}
+                        <li class="list-group-item border-0 py-0">@{{ property }}: {{ entry.properties[property] }}</li>
+                    {% endif %}
+                {% endfor %}
+                {% if entry.targetObj is defined %}
+                    {{ _self.recursiveEntries({'target':entry.targetObj}) }}
+                {% endif %}
+                {% if entry.children|length == 0 %}
+                    <li class="list-group-item border-0 py-0">@value: <span
+                                class="text-success">{{ entry.value }}</span></li>
+                {% endif %}
+                {% if entry.children|length > 0 %}
+                    {{ _self.recursiveEntries(entry.children) }}
+                {% endif %}
+            </ul>
+        </li>
+    {% endfor %}
+{% endmacro %}
+{% macro recursiveUnit(entries, print) %}
+    {% for entry in entries %}
+        {% if print == "true" and entry.children|length == 0 and entry.value is not empty %}
+            <p class="text-success">{{ entry.name }}</p>
+            <p class="text-primary">{{ entry.value }}</p>
+        {% endif %}
+        {% for key, property in entry.properties|keys %}
+            {% if entry.properties[property].name is defined and entry.properties[property].name == "Unit" %}
+                {% set print = true %}
+                <p class="text-warning">{{ entry.name }}</p>
+            {% endif %}
+        {% endfor %}
+        {% if entry.children|length > 0 %}
+            {{ _self.recursiveUnit(entry.children, print) }}
+        {% endif %}
+        {% if entry.targetObj is defined %}
+            {{ _self.recursiveUnit({'target':entry.targetObj}, print) }}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+{% block title %}Selection entries{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .break {
+            flex-basis: 100%;
+        }
+        .char-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .char-wrapper > * {
+            display: flex;
+        }
+
+        .charachteristics-wrapper {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .char-wrapper.desc {
+            width: 100%;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid py-5">
+        <div class="row">
+            {% for key, datum in data if datum is not empty %}
+                <div class="col-4 offset-1 my-4">
+                    <div class="col-12">
+                        <h6>{{ key }}</h6>
+                    </div>
+                    <div class="charachteristics-wrapper">
+                        {% for key,char in datum if char is not empty %}
+                            {% if key == "Description" %}
+                                <div class="char-wrapper desc">
+                                    <div class="char-header text-success">{{ key }}</div>
+                                    <div class="char-property">{{ char }}</div>
+                                </div>
+                            {% elseif key == "Details" %}
+                                <div class="break"></div>
+                                <div class="char-wrapper detail">
+                                    <div class="char-header text-success">{{ key }}</div>
+                                    <div class="char-property">{{ char }}</div>
+                                </div>
+                            {% else %}
+                                <div class="char-wrapper">
+                                    <div class="char-header text-success">{{ key }}</div>
+                                    <div class="char-property">{{ char }}</div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

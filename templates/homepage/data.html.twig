@@ -4,9 +4,34 @@
 
 {% macro recursiveNodes(nodes) %}
     {% for node in nodes %}
+        <li>
+            {% if node.nodeName is defined %}
+                <span class="text-warning">{{ node.nodeName }}</span>
+                {% if node.childNodes|length == 0 %}
+                    <span class="text-success ml-3">{{ node.nodeValue }}</span>
+                {% endif %}
+            {% else %}
+                No name
+            {% endif %}
+            {% if node.attributes is defined %}
+                <ul>
+                    {% for attr in node.attributes if attr is defined %}
+                        <li>@{{ attr.nodeName }}: {{ attr.nodeValue }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% if node.childNodes is defined %}
+                <ul>
+                    {{ _self.recursiveNodes(node.childNodes) }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+    {#{% for node in nodes %}
         {% if node.wholeText is defined and node.wholeText != null %}
-            {#Desc: {{ node.wholeText }}#}
+            Desc: {{ node.wholeText }}
         {% else %}
+            <li>Desc: {{ node.nodeValue }}</li>
             {% if node.childNodes is defined and node.childNodes != null %}
                 <ul class="collapsable-ul bg-secondary">
                     <li>Node name: <h6>{{ node.nodeName }}</h6>
@@ -37,7 +62,7 @@
                 </li>
             {% endif %}
         {% endif %}
-    {% endfor %}
+    {% endfor %}#}
 {% endmacro %}
 
 {% block body %}
@@ -49,7 +74,9 @@
         </div>
         <div class="row">
             <div class="offset-2 col-lg-8 my-5">
-                {{ _self.recursiveNodes(nodes) }}
+                <ul>
+                    {{ _self.recursiveNodes(nodes) }}
+                </ul>
             </div>
         </div>
     </div>

@@ -10,6 +10,7 @@ use App\Entity\Entry;
 use App\Entity\SelectionEntry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
+use DOMNode;
 use Exception;
 use ReflectionClass;
 use ReflectionException;
@@ -92,7 +93,7 @@ class ImportBSManager
     }
 
     /**
-     * @param $entry
+     * @param DOMNode $entry
      * @param null $parent
      * @return string
      */
@@ -108,6 +109,7 @@ class ImportBSManager
                 $entity->setDataType($entry->nodeName);
             }
             if ($entity instanceof Entry) {
+                $entity->setValue(trim($entry->nodeValue));
                 foreach ($entry->attributes as $attribute) {
                     $setter = "set" . ucfirst($attribute->nodeName);
                     if (method_exists($entity, $setter)) {
@@ -116,7 +118,7 @@ class ImportBSManager
                         $entity->addProperty($attribute->nodeName, $attribute->nodeValue);
                     }
                 }
-                if ($entry->nodeName == "constraint"){
+                if ($entry->nodeName == "constraint") {
                     $entity->addProperty("id", $entity->getId());
                     $entity->setId(uniqid("constraint"));
                 }
@@ -158,7 +160,8 @@ class ImportBSManager
         }
     }
 
-    public function importMainData(){
+    public function importMainData()
+    {
         $this->catalogueId = "mainData";
         $data = $this->deserializeLink(self::MAIN_DATA_URL);
         $this->importEntryRecursive($data);
@@ -180,7 +183,14 @@ class ImportBSManager
 
     protected function cleanCatalogue()
     {
+        $connection = $this->manager->getConnection();
+        $connection->beginTransaction();
+        $connection->query('SET FOREIGN_KEY_CHECKS=0');
+        $connection->commit();
         $this->manager->getRepository(Entry::class)->deleteByCatalogue($this->catalogueId);
+        $connection->beginTransaction();
+        $connection->query('SET FOREIGN_KEY_CHECKS=1');
+        $connection->commit();
     }
 
     public function importEntryRecursive($data, $parent = null)

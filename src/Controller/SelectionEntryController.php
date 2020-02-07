@@ -6,9 +6,11 @@ namespace App\Controller;
 
 use App\Entity\CategoryEntry;
 use App\Entity\Entry;
+use App\Entity\EntryLink;
 use App\Entity\SelectionEntry;
 use App\Repository\EntryRepository;
 use App\Repository\SelectionEntryRepository;
+use App\Services\Pagination;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,8 +32,13 @@ class SelectionEntryController extends AbstractController
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
-    public function hydrateEntry(Entry $selectionEntry, EntityManagerInterface $manager, $types)
+    public function hydrateEntry(Entry &$selectionEntry, EntityManagerInterface $manager, $types)
     {
+        if ($selectionEntry instanceof EntryLink) {
+            $entry = $manager->getRepository(Entry::class)->findOneBy(['id' => $selectionEntry->getTargetId()]);
+            $this->hydrateEntry($entry, $manager, $types);
+            $selectionEntry->setTargetObj($entry);
+        }
         foreach ($selectionEntry->getProperties() as $key => $property) {
             try {
                 if (preg_match('/^.*Id$/', $key)) {
@@ -42,49 +49,95 @@ class SelectionEntryController extends AbstractController
                         ->setParameter('id_val', $property)
                         ->getQuery()
                         ->getSingleResult();
-                    if ($val){
+                    if ($val) {
                         $selectionEntry->addProperty($key, $val);
-                        $selectionEntry->addProperty("$key Class", get_class($val));
                     }
                 }
-            } catch (\Exception $exception){
+            } catch (\Exception $exception) {
                 //dump($exception->getMessage());
             }
         }
-        if (count($selectionEntry->getChildren()) > 0){
+        if (count($selectionEntry->getChildren()) > 0) {
             foreach ($selectionEntry->getChildren() as $child) {
                 $this->hydrateEntry($child, $manager, $types);
             }
         }
     }
 
+
     /**
-     * @param EntryRepository $entryRepository
+     * @param EntityManagerInterface $manager
+     * @param Pagination $pagination
+     * @param $page string
+     * @return Response
+     * @Route("/main/{page<\d+>?1}", name="selectionentry_index")
+     */
+    public function indexAction(EntityManagerInterface $manager, Pagination $pagination, $page)
+    {
+        $pagination->setEntityClass(EntryLink::class)
+            ->setCurrentPage($page);
+        $entries = $pagination->getData();
+        foreach ($entries as $entry) {
+            $entry->setTargetObj($manager->getRepository(Entry::class)->findOneBy(['id' => $entry->getTargetId()]));
+        }
+        return $this->render("selectionentry/index.html.twig", [
+            "pagination" => $pagination,
+        ]);
+    }
+
+    /**
+     * @param EntryLink $entry
      * @param EntityManagerInterface $manager
      * @return Response
      * @throws \Doctrine\ORM\NoResultException
      * @throws \Doctrine\ORM\NonUniqueResultException
-     * @Route("/", name="selectionentry_index")
+     * @Route("/{id}/show", name="selectionentry_show")
      */
-    public function indexAction(EntryRepository $entryRepository, EntityManagerInterface $manager)
+    public function showAction(EntryLink $entry, EntityManagerInterface $manager)
     {
-        /*$func = function ($val) {
-            return $val['dataType'];
-        };*/
-        /*$types = array_map($func, $manager->createQueryBuilder()
-            ->select('en.dataType')
-            ->from(Entry::class, 'en')
-            ->where('en.dataType IS NOT NULL')
-            ->groupBy('en.dataType')
-            ->getQuery()
-            ->getResult());*/
-        $entries = $entryRepository->findBy(['catalogueId' => '30b2-6f64-b85e-b4dc', 'dataType' => 'profile'], [], 20);
-        $types[] = 'target';
-        foreach ($entries as $entry) {
-            $this->hydrateEntry($entry, $manager, null);
-        }
-        return $this->render("selectionentry/index.html.twig", [
-            "entries" => $entries
+        //f960-c113-b5bf-d752 (fire dragons)
+        //7d2a-346f-0883-3b49 (eldrad)
+        //5fba-0b5d-2e8c-9218 (rangers)
+        $func = function (Entry $entry, &$data) {
+            $regex = '/^.*characteristic$/';
+            if ($entry->getDataType() && preg_match($regex, $entry->getDataType())) {
+                $key = $entry->getParent()->getParent()->getName();
+                if (!isset($data[$key])){
+                    $data[$key] = [];
+                }
+                $elem = $entry->getValue();
+                if (!empty($elem)){
+                    $data[$key][$entry->getName()] = $elem;
+                }
+                return $data;
+            }
+            return false;
+        };
+        $this->hydrateEntry($entry, $manager, null);
+        $data = $this->recursiveEntryIterator($entry, $func);
+        return $this->render("selectionentry/show.html.twig", [
+            "data" => $data
         ]);
+    }
+
+    /**
+     * @param Entry $entry
+     * @param $ressourcer callable Function to fill the array with
+     * @param null|array $data
+     * @return array|null
+     */
+    public function recursiveEntryIterator(Entry $entry, $ressourcer, &$data = null)
+    {
+        if ($data == null) {
+            $data = [];
+        }
+        $ressourcer($entry, $data);
+        foreach ($entry->getChildren() as $child) {
+            $this->recursiveEntryIterator($child, $ressourcer, $data);
+        }
+        if ($entry instanceof EntryLink) {
+            $this->recursiveEntryIterator($entry->getTargetObj(), $ressourcer, $data);
+        }
+        return $data;
     }
 }

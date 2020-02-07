@@ -5,6 +5,7 @@ namespace App\Services;
 
 
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 use Twig\Error\LoaderError;
@@ -50,12 +51,12 @@ class Pagination
 
     /**
      * Pagination constructor.
-     * @param ObjectManager $manager
+     * @param EntityManagerInterface $manager
      * @param Environment $twig
      * @param RequestStack $requestStack
      * @param string $templateName
      */
-    public function __construct(ObjectManager $manager, Environment $twig, RequestStack $requestStack, string $templateName)
+    public function __construct(EntityManagerInterface $manager, Environment $twig, RequestStack $requestStack, string $templateName)
     {
         $this->manager = $manager;
         $this->twig = $twig;

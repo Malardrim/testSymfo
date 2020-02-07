@@ -49,7 +49,8 @@ class HomepageController extends AbstractController
      */
     public function dataAction(ImportBSManager $importBSManager)
     {
-        $res = $importBSManager->deserializeLink();
+        $res = $importBSManager->deserializeLink();;
+        //$importBSManager->importCatalogue();
         return $this->render('homepage/data.html.twig', [
             'nodes' => $res,
         ]);
