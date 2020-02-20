@@ -64,7 +64,7 @@
                     </li>
                 {% endfor %}
                 <li class="page-item">
-                    <a class="page-link" onclick="showForm()" href="#navchoice">...</a>
+                    <a class="page-link" data-toggle="collapse" href="#navchoice" aria-expanded="true" aria-controls="navchoice">...</a>
                 </li>
                 {% if page > 3 and page < (total_pages - 3) %}
                     {% set elems = [page - 1, page, page + 1] %}
@@ -74,7 +74,7 @@
                         </li>
                     {% endfor %}
                     <li class="page-item">
-                        <a class="page-link" onclick="showForm()" href="#navchoice">...</a>
+                        <a class="page-link" data-toggle="collapse" href="#navchoice" aria-expanded="true" aria-controls="navchoice">...</a>
                     </li>
                 {% endif %}
                 {% for i in (total_pages - 2)..total_pages %}
