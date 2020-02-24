@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Vich\UploaderBundle\Entity\File;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
@@ -45,6 +46,13 @@ class User implements UserInterface
      * NOTE: This is not a mapped field of entity metadata, just a simple property.
      *
      * @Vich\UploadableField(mapping="user_icon", fileNameProperty="iconImg", originalName="iconOriginalName")
+     * @Assert\Image(
+     *     minWidth = 20,
+     *     maxWidth = 60,
+     *     minHeight = 20,
+     *     maxHeight = 60,
+     *     mimeTypes = {"png","jpg","jpeg"}
+     * )
      *
      * @var File|null
      */
