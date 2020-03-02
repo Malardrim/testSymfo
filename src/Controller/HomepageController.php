@@ -2,57 +2,57 @@
 
 namespace App\Controller;
 
+use App\Entity\Catalogue;
+use App\Entity\CategoryEntry;
+use App\Entity\Entry;
 use App\Entity\Item;
 use App\Entity\Rule;
 use App\Form\ItemType;
 use App\Form\RuleType;
+use App\Services\ImportBSManager;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 
 
 class HomepageController extends AbstractController
 {
-
     /**
-     * @param $data
-     * @param array $result
-     * @return mixed
+     * @Route("/", name="homepage")
+     * @param EntityManagerInterface $manager
+     * @return Response
      */
-    public function recursiveCrawling($data, $result = [])
+    public function index(EntityManagerInterface $manager)
     {
-        $count = 1;
-        $result[0] = $data;
-        if (isset($data->childNodes)) {
-            foreach ($data->childNodes as $item) {
-                $result[$count] = [];
-                $result[$count] = $this->recursiveCrawling($item, $result[$count]);
-                $count++;
-            }
+        $catalogues = $manager->getRepository(Catalogue::class)->findAll();
+        foreach ($catalogues as $catalogue) {
+            $catalogue->setEntriesNb(count($manager->getRepository(Entry::class)->findBy(['catalogueId' => $catalogue->getId()])));
         }
-        return $result;
+        return $this->render('homepage/index.html.twig', [
+            'catalogues' => $catalogues,
+        ]);
     }
 
     /**
-     * @Route("/", name="homepage")
+     * @Route("/data_raw", name="dump_data")
+     * @param ImportBSManager $importBSManager
+     * @return Response
      */
-    public function index(SerializerInterface $serializer)
+    public function dataAction(ImportBSManager $importBSManager)
     {
-
-        $client = HttpClient::create();
-        $response = $client->request('GET', "https://raw.githubusercontent.com/BSData/wh40k/master/Aeldari%20-%20Craftworlds.cat");
-        //$data = $serializer->deserialize($response->getContent(), "xml", "array");
-        $crawler = new Crawler($response->getContent());
-        $res = [];
-        foreach ($crawler as $domElement) {
-            $res[] = $this->recursiveCrawling($domElement);
-        }
-        $form = $this->createForm(ItemType::class, new Item());
-        return $this->render('homepage/index.html.twig', [
-            'form' => $form->createView(),
-            'nodes' => $res[0],
+        $res = $importBSManager->deserializeLink();;
+        //$importBSManager->importCatalogue();
+        return $this->render('homepage/data.html.twig', [
+            'nodes' => $res,
         ]);
     }
 }

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My account{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="row my-5">
+            <div class="col-3 offset-1">
+                <h6>Hello {{ user.username }} <img alt="" src="{{ user.icon|iconUser }}" class="img-fluid border border-dark rounded-circle p-2"></h6>
+            </div>
+            <div class="col-3">
+                <h2>My account</h2>
+            </div>
+        </div>
+        <div class="row my-2">
+            <div class="col-3 offset-1">
+                <ul class="nav flex-column nav-account">
+                    {% for block in blocks %}
+                        <li class="nav-item py-1">
+                            <a class="nav-link{% if loop.first %} active{% endif %}" data-toggle="tab" href="#{{ block.id }}">{{ block.header }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-7 border-secondary border px-0 py-2">
+                <div class="tab-content">
+                    {% for block in blocks %}
+                        <div class="tab-pane {% if loop.first %}active show {% endif %}fade" id="{{ block.id }}">
+                            <div class="col-12 my-2">
+                                {{ block.body|raw }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var url = window.location.href;
+        var hash = url.substring(url.indexOf("#")+1);
+        $('[href="#'+hash+'"]').tab('show');
+    </script>
+{% endblock %}

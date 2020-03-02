@@ -1,5 +1,31 @@
 {% block pagination %}
-    {% if total_pages > 0 %}
+    <style>
+        #navchoice{
+            display: flex;
+            justify-content: center;
+        }
+        #navchoice:not(.show){
+            display: none;
+        }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Firefox */
+        input[type=number] {
+            -moz-appearance:textfield;
+        }
+    </style>
+    <div id="navchoice" class="collapse my-3">
+        <form action="{{ app.request.uri }}">
+            <label class="mr-3">Choose page to go</label>
+            <input type="number" min="1" max="{{ total_pages }}" maxlength="3">
+            <button class="btn btn-sm btn-outline-primary" role="button" type="button" onclick="clickValid(this)">Go to page</button>
+        </form>
+    </div>
+    {% if total_pages > 0 and total_pages < 6 %}
         <nav aria-label="Page navigation example" class="d-flex justify-content-center">
             <ul class="pagination m-3">
                 <li class="page-item {{ (page == 1) ? 'disabled' }}">
@@ -22,5 +48,66 @@
                 </li>
             </ul>
         </nav>
+    {% elseif total_pages >= 6 %}
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+            <ul class="pagination m-3">
+                <li class="page-item {{ (page == 1) ? 'disabled' }}">
+
+                    <a class="page-link disabled" href="{{ (page != 1) ? path(route, {'page': page - 1}) : '#' }}"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {% for i in 1..3 %}
+                    <li class="page-item {{ (i == page) ? 'active' }}"><a class="page-link"
+                                                                          href="{{ path(route, {'page': i}) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                <li class="page-item">
+                    <a class="page-link" data-toggle="collapse" href="#navchoice" aria-expanded="true" aria-controls="navchoice">...</a>
+                </li>
+                {% if page > 3 and page < (total_pages - 3) %}
+                    {% set elems = [page - 1, page, page + 1] %}
+                    {% for i in elems %}
+                        <li class="page-item {{ (i == page) ? 'active' }}">
+                            <a class="page-link" href="{{ path(route, {'page': i}) }}">{{ i }}</a>
+                        </li>
+                    {% endfor %}
+                    <li class="page-item">
+                        <a class="page-link" data-toggle="collapse" href="#navchoice" aria-expanded="true" aria-controls="navchoice">...</a>
+                    </li>
+                {% endif %}
+                {% for i in (total_pages - 2)..total_pages %}
+                    <li class="page-item {{ (i == page) ? 'active' }}"><a class="page-link"
+                                                                          href="{{ path(route, {'page': i}) }}">{{ i }}</a>
+                    </li>
+                {% endfor %}
+                <li class="page-item {{ (page == total_pages) ? 'disabled' }}">
+                    <a class="page-link" href="{{ (page != total_pages) ? path(route, {'page': page + 1}) : '#' }}"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     {% endif %}
+    <script>
+        function clickValid(elem) {
+            let form = elem.parentElement;
+            let inp = form.querySelector('input');
+            let valid = (form.checkValidity() && inp.value !== "");
+            if (valid){
+                let action = form.action;
+                let regex = /\d+$/;
+                if (!action.match(regex)){
+                    action += '/22';
+                }
+                form.action = action.replace(regex, inp.value);
+                form.submit();
+            }
+        }
+        function showForm() {
+            document.querySelector("#navchoice").classList.toggle('show');
+        }
+    </script>
 {% endblock %}
