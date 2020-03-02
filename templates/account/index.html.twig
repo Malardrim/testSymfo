@@ -6,7 +6,7 @@
     <div class="container-fluid">
         <div class="row my-5">
             <div class="col-3 offset-1">
-                <h6>Hello {{ app.user.username }} <img src="{{ app.user.iconImg|default('missing') }}"></h6>
+                <h6>Hello {{ user.username }} <img alt="" src="{{ user.icon|iconUser }}" class="img-fluid border border-dark rounded-circle p-2"></h6>
             </div>
             <div class="col-3">
                 <h2>My account</h2>

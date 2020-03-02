@@ -4,7 +4,9 @@
 namespace App\Controller;
 
 
+use App\Entity\UserIcon;
 use App\Form\UserEditType;
+use App\Form\UserIconType;
 use App\Repository\FactionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
@@ -20,21 +22,29 @@ class AccountController extends AbstractController
 {
     /**
      * @Route("/", name="account_index", methods={"GET", "POST"})
+     * @param Request $request
      * @param JWTTokenManagerInterface $JWTManager
      * @param EntityManagerInterface $manager
      * @return Response
      */
-    public function index(JWTTokenManagerInterface $JWTManager, EntityManagerInterface $manager): Response
+    public function index(Request $request, JWTTokenManagerInterface $JWTManager, EntityManagerInterface $manager): Response
     {
         $blocks = [];
         $token = $JWTManager->create($this->getUser());
         $user = $this->getUser();
-        $form = $this->createForm(UserEditType::class, $user);
+        $icon = $this->getUser()->getIcon();
+        if (empty($icon)){
+            $icon = new UserIcon();
+        }
+        $form = $this->createForm(UserIconType::class, $icon);
+        $form->handleRequest($request);
         if ($form->isSubmitted()){
             if ($form->isValid()){
+                $user->setIcon($icon);
+                $manager->persist($icon);
                 $manager->persist($user);
                 $manager->flush();
-                return $this->redirect('account_index');
+                return $this->redirectToRoute('account_index');
             }
             $this->addFlash('error', 'The form was not valid');
         }
@@ -47,7 +57,8 @@ class AccountController extends AbstractController
         $blocks[] = ["id" => "accountData", "header" => "Elements", "body" => $accountInfosBody];
         $blocks[] = ["id" => "apiData","header" => "Api Data", "body" => $apiBody];
         return $this->render('account/index.html.twig', [
-            "blocks" => $blocks
+            "blocks" => $blocks,
+            "user" => $user
         ]);
     }
 }

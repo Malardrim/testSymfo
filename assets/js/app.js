@@ -23,7 +23,26 @@ $(document).ready(function () {
         // see next for specifications
     });
     $('[data-toggle="tooltip"]').tooltip();
+    document.querySelectorAll('.custom-file-input').forEach(element => {
+        element.addEventListener("change", evt => {
+            var elem = evt.target;
+            var label = document.querySelector('label.custom-file-label[for="'+ elem.id +'"]');
+            label.innerHTML = getFilename(elem.value);
+        });
+    });
+    /*$('.custom-file-input').on('change', function () {
+        var label = document.querySelector("#user_edit > div > div > label");
+    });*/
 });
+
+function getFilename(fullPath) {
+    var startIndex = (fullPath.indexOf('\\') >= 0 ? fullPath.lastIndexOf('\\') : fullPath.lastIndexOf('/'));
+    var filename = fullPath.substring(startIndex);
+    if (filename.indexOf('\\') === 0 || filename.indexOf('/') === 0) {
+        filename = filename.substring(1);
+    }
+    return filename;
+}
 
 function initClipboard() {
     var clipboard = new ClipboardJS('.btn');
