@@ -16,6 +16,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Entry
 {
     /**
+     * some cool shit
      * An entry, it's a generic data to get
      * @ORM\Id()
      * @ORM\Column(type="string")
