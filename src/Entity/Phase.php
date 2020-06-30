@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Phase
 {
     /**
+     * hotfix being applied
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
