@@ -27,7 +27,7 @@
         "interactjs": "^1.8.0-alpha.0",
         "jquery": "^3.4.1",
         "net": "^1.0.2",
-        "node-sass": "^4.13.0",
+        "node-sass": "^4.13.1",
         "popper": "^1.0.1",
         "rijs": "^0.9.1",
         "rijs.npm": "^2.0.0",
